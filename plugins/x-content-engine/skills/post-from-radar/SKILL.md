@@ -39,7 +39,7 @@ Two steps run as separate subagents, each for a reason: the fact-check (step 5) 
   - **Single post** for a straightforward release or a number. This is the default.
   - **Long post** when the story is one mechanism, gotcha or limitation plus a practitioner take. It needs more than 280 characters but not a step-by-step. Good for Medium stories with a real angle.
   - **Thread** when the explanation has several distinct steps (what happened, why, how it works, what to do). It is usually High importance.
-- Start from the row's draft for that format, or write it if the row lacks one:
+- Reuse the hourly task's work: its Key Facts (each with a source) are the research base, and its draft for the chosen format (X Post, X Thread or Long Post) is the starting text. Don't re-research facts already in Key Facts; the step 2 search covers anything newer, and step 5 re-checks the final wording. Write a format only if the row lacks it:
   - Single post: 280 characters or fewer (X counts each URL as 23; a quoted post's link doesn't count), with the official link and hashtags per x-voice.
   - Long post: 600-1,500 characters, plain text (no markdown).
     - The first ~250 characters must stand alone as the hook with the key fact.
@@ -79,28 +79,29 @@ Then, back here:
 Give the format recommendation, the fact-check table, the final text (with a one-line note of any fact or voice fixes) and what was dropped or changed. Save the final text back to the row (X Post, Long Post or X Thread). Wait for a yes, unless the user already said "post it".
 
 ## 7. Post (subagent)
-Launch one general-purpose Agent with the final text verbatim, HANDLE, the story's product and company names, and its Announced date. If Claude in Chrome isn't connected, don't launch it: the final text is already saved on the row, so tell the user to open Chrome with the extension and say "post it" again, or to post the text themselves. Instruct it to:
+Every browser action can cost the user an approval click, so do everything that doesn't need X's UI here, before launching the subagent.
+
+**Find the post to quote (here, no browser).** For a single post or long post about an official announcement, look for the announcement's own X post: check the official source page and the row's sources for an embedded or linked x.com status URL, then WebSearch (e.g. `site:x.com <company or product account> <product>`). Prefer, in order: the product's own account, the company account, the CEO's own announcement post; never a news aggregator. Use the handle the company links from its own site. If nothing turns up, post without a quote rather than searching X in the browser.
+
+Launch one general-purpose Agent with the final text verbatim, the format, HANDLE, and the quote URL if one was found. If Claude in Chrome isn't connected, don't launch it: the final text is already saved on the row, so tell the user to open Chrome with the extension and say "post it" again, or to post the text themselves. Instruct it to:
 - Read the chrome-browser skill if one is listed (it covers Claude in Chrome's tools, tabs and site permissions).
-- Load the Claude in Chrome tools in ONE ToolSearch call: tabs_context_mcp, navigate, computer, read_page, tabs_create_mcp, tabs_close_mcp, browser_batch, find, get_page_text. Call tabs_context_mcp with createIfEmpty and work only in that new tab.
+- Load the Claude in Chrome tools in ONE ToolSearch call: tabs_context_mcp, navigate, computer, find, get_page_text, browser_batch, tabs_close_mcp. Call tabs_context_mcp with createIfEmpty and work only in that new tab.
+- Use as few browser actions as possible. Where browser_batch is available, group consecutive steps (e.g. navigate + wait + screenshot) into one call.
 
-**Single post or long post: quote the official announcement when one exists.**
-1. Find it on X: search `x.com/search?q=<product> (from:<company> OR from:<ceo> OR from:<product account>) since:<date>&f=live`, then `"<product>" filter:verified since:<date>&f=top`.
-   - Prefer, in order: the product's own account, the company account, the CEO's own announcement post. Never a news aggregator.
-   - Check the handle: an account with 0 posts, 0 followers or no verification is a squatter; don't quote or tag it. Use the handle the company itself tags in its post.
-   - Open the post, confirm its text matches the announcement, and note its status URL.
-2. On the post page: `find` the Repost button in the main post's action bar, click it, `find` the "Quote" menu item, click it, wait ~5s, then screenshot and CONFIRM the composer shows "Add a comment" with the quoted card. If it shows a blank "What's happening?" composer, close it, reload the post and retry once.
-3. Click the comment box and type the text exactly (keep a long post's paragraph breaks). Screenshot and confirm the counter isn't negative and the quoted card is present, then click Post once. If the counter goes negative on a long post, Premium long posts aren't active: stop and report.
-4. If no official post exists, post it plain via x.com/compose/post with the same checks.
+**Single post or long post (about 6 actions):**
+1. Navigate to `https://x.com/intent/post?text=<URL-encoded final text>` and, if there is a quote URL, add `&url=<URL-encoded quote URL>`. Keep a long post's paragraph breaks (encode them as %0A). If `/intent/post` doesn't open a composer, use `/intent/tweet` with the same parameters.
+2. Screenshot once and check, in that one image: the account is HANDLE, the text is complete, the counter isn't negative, and (if quoting) the quoted post shows as a card. If the text or card is wrong, or the counter is negative because the quote link counts against the limit, fall back once to the long route: open the quote URL, click Repost, then Quote, and type the text into "Add a comment". If the counter is negative on a long post with no quote, Premium long posts aren't active: stop and report.
+3. Click Post once.
 
-**Thread:** at x.com/compose/post, type post 1, then add each post with the "+" button. Dismiss autocomplete by clicking elsewhere in the text, and never pick a suggestion. Screenshot and check the text and counters, then click "Post all" once.
+**Thread:** at x.com/compose/post, type post 1, then add each post with the "+" button. Dismiss autocomplete by clicking elsewhere in the text, and never pick a suggestion. Screenshot once to check the text and counters, then click "Post all" once.
 
 **Duplicate guard:** never click Post a second time without first confirming on HANDLE's profile page (x.com/<handle without @>) that the first didn't publish.
 
-**Verify:** confirm on HANDLE's profile page (the profile, not search; search indexing lags) that the post (or every thread post, in order) is live, with the quote if one was used. For a long post, open it and check the full text past "Show more".
+**Verify:** navigate to HANDLE's profile page (the profile, not search; search indexing lags) and read it with one get_page_text: the post (or every thread post, in order) is live, with the quote if one was used. For a long post, open it and check the full text past "Show more".
 
-**Limits:** post only from HANDLE; if the browser is signed in to a different account, stop and report. Don't like, repost, follow, reply or boost. Close every tab it opened. Stop and report on a login wall, a permission prompt, or errors after 2-3 tries.
+**Limits:** post only from HANDLE; if the browser is signed in to a different account, stop and report. Don't like, repost, follow, reply or boost. Close every tab it opened. Stop and report on a login wall or errors after 2-3 tries.
 
-The subagent returns: the post URLs, the time it was posted, the quoted post's URL and author (if any), and any problems (for example a squatter handle it skipped).
+The subagent returns: the post URLs, the time it was posted, the quoted post's URL and author (if any), whether it needed the fallback route, and any problems.
 
 ## 8. Close out
 - Update the row: Status "Posted". Put the text that actually went out into the matching field.
