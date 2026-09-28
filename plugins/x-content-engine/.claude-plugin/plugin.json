@@ -1,0 +1,11 @@
+{
+  "name": "x-content-engine",
+  "displayName": "X Content Engine",
+  "version": "0.1.0",
+  "description": "Post verified AI news to X from a Notion radar, keep one voice across every draft, and render concept-explainer videos from a design system.",
+  "author": { "name": "Sudhakar Pallaprolu", "url": "https://github.com/pallaprolus" },
+  "homepage": "https://github.com/pallaprolus/x-content-engine",
+  "repository": "https://github.com/pallaprolus/x-content-engine",
+  "license": "MIT",
+  "keywords": ["x", "twitter", "ai-news", "fact-check", "explainer-video", "notion", "skills"]
+}

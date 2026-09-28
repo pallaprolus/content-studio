@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+work/
+*.mp4
+*.wav
+still_*.png
+.DS_Store
