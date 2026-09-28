@@ -1,6 +1,7 @@
 import sys; sys.path.insert(0, '.')
 from mlib import *
-configure('ds/blueprint-explainers/project', 'blueprint')
+HANDLE = "@your_handle"                                       # x_handle from the plugin's config.json
+configure('ds/blueprint-explainers/project', 'blueprint', handle=HANDLE)
 BG = make_bg()
 SCENES = [('title', 0, 5), ('problem', 5, 13), ('flow', 13, 24), ('end', 54, 60)]
 DUR = 60.0; SERIES = "RAG · 2026 EDITION"

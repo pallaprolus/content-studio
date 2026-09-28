@@ -1,9 +1,10 @@
 import sys; sys.path.insert(0, '.')
 from mlib import *
-configure('ds/living-infographic/project', 'light')          # or 'dark', size=(1920, 1080)
+HANDLE = "@your_handle"                                       # x_handle from the plugin's config.json
+configure('ds/living-infographic/project', 'light', handle=HANDLE)   # or 'dark', size=(1920, 1080)
 BG = make_bg()
 SCENES = [('problem', 0, 6.5), ('arch', 6.5, 14), ('poster', 46, 57)]   # (name, start, end) — poster last
-DUR = 57.0; HANDLE = "@pallaprolu"
+DUR = 57.0
 
 def s_problem(c, lt, d):
     a = 1 - seg(lt, d - .35, d)             # first scene: no fade-in

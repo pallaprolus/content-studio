@@ -1,16 +1,17 @@
 ---
 name: "x-voice"
-description: "Voice rules for anything written to post as Sudhakar (@pallaprolu) on X: single posts, long posts, threads and video captions. Apply before showing or saving any draft."
+description: "Voice rules for anything written to post on X through the X Content Engine: single posts, long posts, threads and video captions. Apply before showing or saving any draft."
 ---
 
-# X voice (@pallaprolu)
+# X voice
 
-The one place these rules live. The AI News Radar task, post-from-radar and explainer-motion-video all apply them
+The one place these rules live. The AI News Radar discovery task, post-from-radar and explainer-motion-video all apply them
 to every draft before a human sees it. Adapted from the named AI tells in elvisun/newsjack's voice-extractor.
 
 ## Who is talking
-A Lead DevOps/AI engineer talking to AI and DevOps engineers: plain, direct, specific. Lead with the concrete fact.
-Opinion is first person and labelled ("My take:", "I'd"); facts are stated plainly with their source.
+The `persona` in `config.json` at the plugin root (`<this skill's base directory>/../../config.json`) says who is
+posting and to whom; if it's missing, write as a practitioner talking to peers. Either way: plain, direct, specific.
+Lead with the concrete fact. Opinion is first person and labelled ("My take:", "I'd"); facts are stated plainly with their source.
 
 ## Hard rules (fix every hit)
 - **No hype or consultant words:** game-changer / game-changing, revolutionary / revolutionize, groundbreaking,
@@ -44,6 +45,6 @@ Run a quick regex pass in Bash over the final text for the hard-rule words and p
 reread for the soft rules. Report what you changed in one line when showing the draft.
 
 ## Later
-A measured voice fingerprint from 5–20 of Sudhakar's own posts (sentence-length spread, favourite connectives,
-punctuation habits) would replace the generic rules above with his actual habits. Build it only when he asks and
-provides or approves the sample posts.
+A measured voice fingerprint from 5–20 of the user's own posts (sentence-length spread, favourite connectives,
+punctuation habits) would replace the generic rules above with their actual habits. Build it only when they ask and
+provide or approve the sample posts.

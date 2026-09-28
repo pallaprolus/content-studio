@@ -5,6 +5,7 @@ import cairo, math, subprocess, sys, re, os, json
 
 T, S, TS = {}, {}, {}        # colour roles (from ROLES), sizes in px (spacing/radius/stroke/size/frame), type styles
 W, H, FPS = 1080, 1350, 30
+HANDLE = ''                  # set by configure(..., handle=)
 LOOK = 'infographic'         # 'infographic' (Living Infographic) or 'blueprint' (Blueprint Explainers)
 FAM, FACES, ICON, HUES, SHADOW = {}, [], {}, [], {}
 WEIGHTS = {'r': 400, 'm': 500, 's': 600, 'b': 700, 'x': 800}
@@ -58,9 +59,11 @@ def install(ds):
     subprocess.run(['fc-cache', '-f'], check=True)
     print(f"installed {len(faces)} faces, {len(icons)} icons from {tok['name']}")
 
-def configure(ds, theme=None, size=None, fps=30):
-    """Load a design system. theme: a theme id from its tokens (default: the first). size: (w, h) or the frame tokens."""
-    global W, H, FPS, LOOK
+def configure(ds, theme=None, size=None, fps=30, handle=''):
+    """Load a design system. theme: a theme id from its tokens (default: the first). size: (w, h) or the frame tokens.
+    handle: the X handle drawn by chrome() and end_card() (x_handle from the plugin's config.json)."""
+    global W, H, FPS, LOOK, HANDLE
+    HANDLE = handle
     tok = json.load(open(f'{ds}/tokens.json')); name = tok['name']
     themes = [t['id'] for t in tok['color']['themes']]; theme = theme or themes[0]
     def pick(v): return v.get(theme, v[themes[0]]) if isinstance(v, dict) else v
@@ -393,8 +396,9 @@ def _glow(c, path_fn, a=1.0):
         for wdt, k in ((blur, .12), (blur * .55, .2), (blur * .3, .35)):
             path_fn(); c.set_line_width(wdt); c.set_source_rgba(*rgb, al * k * a); c.stroke()
 
-def chrome(c, series, label, t, t_end, handle="@pallaprolu"):
+def chrome(c, series, label, t, t_end, handle=None):
     """series top-left (muted), scene label top-right (signal), progress bar at 1286 with glow, handle above it."""
+    handle = HANDLE if handle is None else handle
     x = S['space-frame']; cs = TS['chrome']['size']
     styled(c, series, x, 56 + cs * .8, 'chrome', T['MUTED'], upper=True)
     styled(c, label, W - x, 56 + cs * .8, 'chrome', T['SIGNAL'], align='r', upper=True)
@@ -456,8 +460,9 @@ def fail_tag(c, s, cx, cy, a=1.0):
     c.set_line_width(2.2); c.set_source_rgba(*T['BAD'], a); c.stroke()
     styled(c, lab, cx, cy + 8, 'node-label', T['INK'], a, 'c')
 
-def end_card(c, lt, line_a, line_b, question, handle="@pallaprolu"):
+def end_card(c, lt, line_a, line_b, question, handle=None):
     """display-xl statement that slams from 1.8x (line_b may hold *italic*), the body-lg question, then the handle."""
+    handle = HANDLE if handle is None else handle
     a = eo(seg(lt, 0, .45)); s = 1 + .8 * (1 - eo(seg(lt, 0, .45))); d = TS['display-xl']
     c.save(); c.translate(W / 2, 560); c.scale(s, s)
     serif(c, line_a, 0, 0, 'display-xl', a, 'c'); serif(c, line_b, 0, d['lh'], 'display-xl', a, 'c'); c.restore()

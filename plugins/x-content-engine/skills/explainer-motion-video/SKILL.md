@@ -1,6 +1,6 @@
 ---
 name: "explainer-motion-video"
-description: "Create animated concept-explainer videos (MP4 with synthesized music) about AI/tech topics for X or LinkedIn, rendered from one of Sudhakar's design systems (Living Infographic or Blueprint Explainers): storyboard, fact-check, render with Cairo + ffmpeg, post to X."
+description: "Create animated concept-explainer videos (MP4 with synthesized music) about AI/tech topics for X or LinkedIn, rendered from one of the user's design systems (by default Living Infographic or Blueprint Explainers): storyboard, fact-check, render with Cairo + ffmpeg, post to X."
 ---
 
 # Explainer motion video
@@ -10,13 +10,14 @@ music, ready for X/LinkedIn. pycairo draws every frame, ffmpeg encodes, numpy sy
 
 **This skill holds process only; the code is in this skill's folder (`scripts/`, `templates/`). The look lives in the design systems** — every colour, font, size and
 visual/motion rule. `mlib` loads them at setup, so a change to a design system shows up in the next video.
-- **Living Infographic** — https://claude.ai/code/artifact/ccdc64ad-a237-4bb0-aa22-28f563629bfd (themes `light`,
-  `dark`). For topics with many parts to map: protocols, ecosystems, histories.
-- **Blueprint Explainers** — https://claude.ai/code/artifact/a2fd3b39-eada-4626-8037-6bf555e19091 (theme
-  `blueprint` for video; `paper` is for static posts, which belong in the Design canvas, not here). For one
-  mechanism or one "how it works" flow.
 
-Before storyboarding, read the chosen system's README (Artifact tool, action `read`, `path: "project/README.md"`)
+**Settings:** read `config.json` at the plugin root (`<this skill's base directory>/../../config.json`). It lists
+the `design_systems` (name, artifact URL, video themes, what each is for) and the `x_handle` shown in the video.
+Values the user gives in the conversation win; if the file can't be read or a value is empty, ask once. The two
+templates target the default systems, Living Infographic and Blueprint Explainers; another design system needs
+its token names mapped in `ROLES` in `mlib.py` first.
+
+Before storyboarding, read the chosen system's README from its artifact URL (Artifact tool, action `read`, `path: "project/README.md"`)
 and follow its content fundamentals, visual foundations and motion rules. Never restate or hard-code its values.
 
 ## Workflow
@@ -104,7 +105,8 @@ adds `LINE SIGNAL`), sizes in `S` by token name (`S['space-frame']`, `S['node-pi
 `templates/living_infographic.py` and `templates/blueprint.py` in this skill's folder are complete, runnable
 starting points (both render as-is once Setup is done). Copy the matching one to `work/scenes.py`, keep the
 `draw()`/`run()` scaffolding, and replace the scenes, `SCENES` timings, `DUR` and the poster `ROWS` or end card
-with the storyboard. The design-system path in `configure()` must match the folder used in Setup.
+with the storyboard. The design-system path in `configure()` must match the folder used in Setup, and `HANDLE`
+must be the settings' `x_handle`.
 
 ## Render
 
@@ -127,11 +129,14 @@ typed line completes; frame 0 is a readable title card; facts match sources; the
 - The upload tool only accepts files shared with the session: stage the file first with
   `device_stage_files` (e.g. from `~/Downloads`; request folder access if needed) and upload from
   `/mnt/user-data/uploads/...`.
-- Open `https://x.com/compose/post`. `find` "file input inside the modal composer dialog" — the page also has a
+- If Claude in Chrome isn't connected, stop here: the MP4 and the chosen caption are already delivered, so the user
+  can post them by hand or say "post it" again once Chrome is open.
+- Open `https://x.com/compose/post` and check the browser is signed in as the settings' `x_handle`; if not, stop
+  and report. `find` "file input inside the modal composer dialog" — the page also has a
   timeline composer with its own file input; uploading there attaches to the wrong post.
 - **Upload the video first, then click the text box and type.** Typing first once left the upload stuck on
   "Preparing media…"; if that happens for >60 s, close the dialog → Discard → start over.
 - Dismiss informational popups (e.g. "Downloadable videos → Got it"), wait for the video preview / "Ready",
   screenshot to verify text + media, click Post.
-- Verify on the profile page, report the status URL, close the tab. Mention anything notable (e.g. Premium users
+- Verify on the `x_handle` profile page, report the status URL, close the tab. Mention anything notable (e.g. Premium users
   can download the video; toggle via Edit on the video).

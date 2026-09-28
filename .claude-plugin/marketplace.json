@@ -8,7 +8,7 @@
       "source": "./plugins/x-content-engine",
       "displayName": "X Content Engine",
       "description": "Post verified AI news to X from a Notion radar, keep one voice across every draft, and render concept-explainer videos from a design system.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "author": { "name": "Sudhakar Pallaprolu" },
       "homepage": "https://github.com/pallaprolus/x-content-engine",
       "repository": "https://github.com/pallaprolus/x-content-engine",

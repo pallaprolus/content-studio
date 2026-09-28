@@ -1,17 +1,20 @@
 ---
 name: "post-from-radar"
-description: "Post to X (@pallaprolu): a story from the AI News Radar Notion database or any AI/tech announcement Sudhakar asks to share. Use when he says 'post [topic]', 'post the [story] one', 'share/tweet this announcement', or asks what to post."
+description: "Post to X: a story from the user's AI News Radar Notion database or any AI/tech announcement they ask to share, as a single post, long post or thread, fact-checked first. Use when they say 'post [topic]', 'post to X about ...', 'post the [story] one', 'share/tweet this announcement', or ask what to post."
 ---
 
 # Post from AI News Radar
 
-AI News Radar is a Notion database filled hourly by a scheduled cloud task.
-- Data source: collection://21556bdd-8290-4eef-aaa0-accd7ac743eb
+## Settings
+Read `config.json` at the plugin root (two folders above this skill's base directory: `<base>/../../config.json`) before step 1. It gives `x_handle`, `x_premium`, `timezone` and `radar.notion_data_source`. Values the user gives in the conversation win. If the file can't be read or a value is empty, ask the user once for it. Below, HANDLE means `x_handle` and TZ means `timezone`.
+
+AI News Radar is a Notion database, usually filled by a scheduled discovery task.
+- Data source: `radar.notion_data_source` from the settings.
 - Key fields: Story, Status (New / Posted / Skipped / Needs check), Verification, Freshness (Fresh (under 24h) / New development / Older context / Clock unconfirmed), Importance, Announced (the first-public date), First Reported By, Official Source, Other Sources, Key Facts, X Post, X Thread, Long Post, Dedupe Key.
 
 Every news or announcement post on X goes through this skill, including announcements that aren't in the Radar yet (step 1 logs them first). Voice and hashtags come from the x-voice skill. Concept explainer videos go through explainer-motion-video instead.
 
-@pallaprolu has X Premium. That means long posts (up to ~25,000 characters; the timeline shows only the first ~280 behind "Show more") and editing a post within about 1 hour of publishing.
+If `x_premium` is true, the account can publish long posts (up to ~25,000 characters; the timeline shows only the first ~280 behind "Show more") and edit a post within about 1 hour of publishing. If it is false, offer only single posts and threads, and treat posts as final once published.
 
 The user asking to post one story is permission to publish that one post, long post or thread. Never post anything else.
 
@@ -49,9 +52,9 @@ Two steps run as separate subagents, each for a reason: the fact-check (step 5) 
 Apply the x-voice skill to the draft and fix every hit. This is now the candidate text: the exact words that would go out.
 
 ## 5. Independent fact-check (subagent)
-Launch one general-purpose Agent that has not seen this conversation. Give it only:
+Launch one general-purpose Agent that has not seen this conversation. (If this environment can't launch subagents, run the same check here instead: work from only the candidate text and the source URLs, not the row's Key Facts or anything said earlier, and follow the instructions below yourself.) Give it only:
 - the candidate text verbatim (every post of a thread),
-- the current date and time (America/Chicago),
+- the current date and time (TZ),
 - the row's Official Source and Other Sources URLs, labelled as leads to start from, not as proof.
 Don't pass the row's Key Facts, your reasoning or what you expect it to find; it should reach its own verdict.
 
@@ -76,8 +79,8 @@ Then, back here:
 Give the format recommendation, the fact-check table, the final text (with a one-line note of any fact or voice fixes) and what was dropped or changed. Save the final text back to the row (X Post, Long Post or X Thread). Wait for a yes, unless the user already said "post it".
 
 ## 7. Post (subagent)
-Launch one general-purpose Agent with the final text verbatim, the story's product and company names, and its Announced date. Instruct it to:
-- Read the anthropic-skills:chrome-browser skill.
+Launch one general-purpose Agent with the final text verbatim, HANDLE, the story's product and company names, and its Announced date. If Claude in Chrome isn't connected, don't launch it: the final text is already saved on the row, so tell the user to open Chrome with the extension and say "post it" again, or to post the text themselves. Instruct it to:
+- Read the chrome-browser skill if one is listed (it covers Claude in Chrome's tools, tabs and site permissions).
 - Load the Claude in Chrome tools in ONE ToolSearch call: tabs_context_mcp, navigate, computer, read_page, tabs_create_mcp, tabs_close_mcp, browser_batch, find, get_page_text. Call tabs_context_mcp with createIfEmpty and work only in that new tab.
 
 **Single post or long post: quote the official announcement when one exists.**
@@ -91,11 +94,11 @@ Launch one general-purpose Agent with the final text verbatim, the story's produ
 
 **Thread:** at x.com/compose/post, type post 1, then add each post with the "+" button. Dismiss autocomplete by clicking elsewhere in the text, and never pick a suggestion. Screenshot and check the text and counters, then click "Post all" once.
 
-**Duplicate guard:** never click Post a second time without first confirming on x.com/pallaprolu that the first didn't publish.
+**Duplicate guard:** never click Post a second time without first confirming on HANDLE's profile page (x.com/<handle without @>) that the first didn't publish.
 
-**Verify:** confirm on x.com/pallaprolu (the profile, not search; search indexing lags) that the post (or every thread post, in order) is live, with the quote if one was used. For a long post, open it and check the full text past "Show more".
+**Verify:** confirm on HANDLE's profile page (the profile, not search; search indexing lags) that the post (or every thread post, in order) is live, with the quote if one was used. For a long post, open it and check the full text past "Show more".
 
-**Limits:** post only from @pallaprolu. Don't like, repost, follow, reply or boost. Close every tab it opened. Stop and report on a login wall, a permission prompt, or errors after 2-3 tries.
+**Limits:** post only from HANDLE; if the browser is signed in to a different account, stop and report. Don't like, repost, follow, reply or boost. Close every tab it opened. Stop and report on a login wall, a permission prompt, or errors after 2-3 tries.
 
 The subagent returns: the post URLs, the time it was posted, the quoted post's URL and author (if any), and any problems (for example a squatter handle it skipped).
 
@@ -105,6 +108,6 @@ The subagent returns: the post URLs, the time it was posted, the quoted post's U
   - the posted text or a link to it
   - which account was quoted and why (if any)
   - anything dropped or changed during the fact-check and voice pass
-  - the time the edit window closes (about 1 hour after posting), in case the user wants a wording change
+  - if `x_premium` is true, the time the edit window closes (about 1 hour after posting), in case the user wants a wording change
   - Sources (official source, the quoted X post, plus the X post URL)
-- Edits: if the user asks for a wording fix within the edit window, send any new or changed factual claim through the step 5 check first, then use the post's "..." menu > Edit via the step 7 subagent pattern. Never delete and repost unless the user asks.
+- Edits (only when `x_premium` is true): if the user asks for a wording fix within the edit window, send any new or changed factual claim through the step 5 check first, then use the post's "..." menu > Edit via the step 7 subagent pattern. Never delete and repost unless the user asks.
