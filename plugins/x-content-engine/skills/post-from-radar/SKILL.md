@@ -6,7 +6,7 @@ description: "Post to X: a story from the user's AI News Radar Notion database o
 # Post from AI News Radar
 
 ## Settings
-Read `config.json` at the plugin root (two folders above this skill's base directory: `<base>/../../config.json`) before step 1. It gives `x_handle`, `x_premium`, `timezone` and `radar.notion_data_source`. Values the user gives in the conversation win. If the file can't be read or a value is empty, ask the user once for it. Below, HANDLE means `x_handle` and TZ means `timezone`.
+Before step 1, read the plugin's settings file. Read `<base>/../../config.json` directly, where `<base>` is the "Base directory for this skill" shown when this skill loaded; don't search for it. It gives `x_handle`, `x_premium`, `timezone` and `radar.notion_data_source`. Values the user gives in the conversation win. If the file can't be read or a value is empty, ask the user once for it. Below, HANDLE means `x_handle` and TZ means `timezone`.
 
 AI News Radar is a Notion database, usually filled by a scheduled discovery task.
 - Data source: `radar.notion_data_source` from the settings.

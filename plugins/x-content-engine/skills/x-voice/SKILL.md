@@ -9,8 +9,8 @@ The one place these rules live. The AI News Radar discovery task, post-from-rada
 to every draft before a human sees it. Adapted from the named AI tells in elvisun/newsjack's voice-extractor.
 
 ## Who is talking
-The `persona` in `config.json` at the plugin root (`<this skill's base directory>/../../config.json`) says who is
-posting and to whom; if it's missing, write as a practitioner talking to peers. Either way: plain, direct, specific.
+The `persona` in the plugin's settings file says who is posting and to whom. Read `<base>/../../config.json` directly, where `<base>` is the "Base directory for this skill" shown when this skill loaded; don't search for it.
+If it's missing, write as a practitioner talking to peers. Either way: plain, direct, specific.
 Lead with the concrete fact. Opinion is first person and labelled ("My take:", "I'd"); facts are stated plainly with their source.
 
 ## Hard rules (fix every hit)
