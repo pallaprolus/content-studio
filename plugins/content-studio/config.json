@@ -1,0 +1,41 @@
+{
+  "_about": "Settings for the Content Studio skills and agents. Edit these for your own account; the skills read this file at the start of every run. Values the user gives in the conversation override it.",
+  "x_handle": "@pallaprolu",
+  "x_premium": true,
+  "timezone": "America/Chicago",
+  "persona": "A Lead DevOps/AI engineer talking to AI and DevOps engineers: plain, direct, specific.",
+  "radar": {
+    "notion_data_source": "collection://21556bdd-8290-4eef-aaa0-accd7ac743eb",
+    "notion_database_url": "https://app.notion.com/p/161e2e07843c460a949a0008aafe8fd4"
+  },
+  "design_systems": [
+    {
+      "name": "Living Infographic",
+      "artifact_url": "https://claude.ai/code/artifact/ccdc64ad-a237-4bb0-aa22-28f563629bfd",
+      "video_themes": [
+        "light",
+        "dark"
+      ],
+      "use_for": "Topics with many parts to map: protocols, ecosystems, histories.",
+      "renderer": "explainer-motion-video"
+    },
+    {
+      "name": "Blueprint Explainers",
+      "artifact_url": "https://claude.ai/code/artifact/a2fd3b39-eada-4626-8037-6bf555e19091",
+      "video_themes": [
+        "blueprint"
+      ],
+      "use_for": "One mechanism or one 'how it works' flow. Its 'paper' theme is for static posts, which belong in the Design canvas, not here.",
+      "renderer": "explainer-motion-video"
+    },
+    {
+      "name": "Working Paper",
+      "artifact_url": "https://claude.ai/artifact/F8oBBfPBiSsbfqYduUxFuk",
+      "renderer": "working-paper-series",
+      "video_themes": [
+        "light"
+      ],
+      "use_for": "Architecture and mechanism series: one animated figure per page, many pages joined into silent videos (the MCP series)."
+    }
+  ]
+}
