@@ -12,7 +12,8 @@ music, ready for X/LinkedIn. pycairo draws every frame, ffmpeg encodes, numpy sy
 visual/motion rule. `mlib` loads them at setup, so a change to a design system shows up in the next video.
 
 **Settings:** Read `<base>/../../config.json` directly, where `<base>` is the "Base directory for this skill" shown when this skill loaded; don't search for it. It lists
-the `design_systems` (name, artifact URL, video themes, what each is for) and the `x_handle` shown in the video.
+the `design_systems` (name, artifact URL, renderer, video themes, what each is for) and the `x_handle` shown in the video.
+This skill renders only the systems whose `renderer` is `explainer-motion-video`; a Working Paper series goes to the working-paper-series skill.
 Values the user gives in the conversation win; if the file can't be read or a value is empty, ask once. The two
 templates target the default systems, Living Infographic and Blueprint Explainers; another design system needs
 its token names mapped in `ROLES` in `mlib.py` first.

@@ -1,0 +1,23 @@
+{
+  "name": "content-studio",
+  "displayName": "Content Studio",
+  "version": "0.3.0",
+  "description": "Content Studio: post verified AI news to X, plan and fact-check concept explainers for any platform, and render explainer videos from design systems, with one voice across every draft.",
+  "author": {
+    "name": "Sudhakar Pallaprolu",
+    "url": "https://github.com/pallaprolus"
+  },
+  "homepage": "https://github.com/pallaprolus/content-studio",
+  "repository": "https://github.com/pallaprolus/content-studio",
+  "license": "MIT",
+  "keywords": [
+    "x",
+    "twitter",
+    "ai-news",
+    "fact-check",
+    "explainer-video",
+    "content-planning",
+    "notion",
+    "skills"
+  ]
+}

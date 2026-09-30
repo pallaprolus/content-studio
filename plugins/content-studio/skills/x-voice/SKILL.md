@@ -1,6 +1,6 @@
 ---
 name: "x-voice"
-description: "Voice rules for anything written to post on X through the X Content Engine: single posts, long posts, threads and video captions. Apply before showing or saving any draft."
+description: "Voice rules for anything written to post on X through Content Studio: single posts, long posts, threads and video captions. Apply before showing or saving any draft."
 ---
 
 # X voice
